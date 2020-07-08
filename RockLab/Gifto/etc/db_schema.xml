@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="gift_products" resource="default" engine="innodb" comment="gift_products">
+        <column xsi:type="int"
+                name="id"
+                unsigned="true"
+                padding="10"
+                nullable="false"
+                identity="true"
+                comment="id"/>
+        <column xsi:type="varchar"
+                name="status"
+                length="20"
+                nullable="false"
+                comment="status"/>
+        <column xsi:type="varchar"
+                name="title"
+                length="30"
+                nullable="false"
+                comment="title"/>
+        <column xsi:type="varchar"
+                name="label"
+                length="30"
+                nullable="false"
+                comment="label"/>
+        <column xsi:type="text"
+                name="mainProduct"
+                nullable="false"
+                comment="mainProduct"/>
+        <column xsi:type="text"
+                name="giftProduct"
+                nullable="false"
+                comment="giftProduct"/>
+        <column xsi:type="int"
+                name="qty"
+                padding="6"
+                nullable="false"
+                comment="qty"/>
+        <constraint xsi:type="primary" referenceId = "PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    </schema>

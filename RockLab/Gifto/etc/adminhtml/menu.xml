@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="RockLab_Gifto::GIFT_MANAGER"
+            title="GIFT MANAGER"
+            translate="title"
+            module="RockLab_Gifto"
+            sortOrder="20"
+            action="gift/gift"
+            resource="RockLab_Gifto::managers_gifts_list_access"
+        />
+    </menu>
+</config>

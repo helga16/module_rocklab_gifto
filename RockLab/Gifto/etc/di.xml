@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="RockLab\Gifto\Api\Repository\GiftRepositoryInterface"
+            type="RockLab\Gifto\Repository\GiftRepository"/>
+    <preference for="RockLab\Gifto\Api\Model\GiftProductInterface"
+                type="RockLab\Gifto\Model\GiftProduct"/>
+    <virtualType name="RockLab\Gifto\Model\ResourceModel\GiftProduct\GridCollection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">gift_products</argument>
+            <argument name="resourceModel"
+                      xsi:type="string">RockLab\Gifto\Model\ResourceModel\GiftProduct</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="gift_manager_listing_data_source" xsi:type="string">RockLab\Gifto\Model\ResourceModel\GiftProduct\GridCollection</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
