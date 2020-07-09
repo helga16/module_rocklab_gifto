@@ -5,7 +5,6 @@ namespace RockLab\Gifto\Controller\Adminhtml\Gift;
 use RockLab\Gifto\Api\Model\GiftProductInterfaceFactory;
 use RockLab\Gifto\Api\Repository\GiftRepositoryInterface;
 use RockLab\Gifto\Model\GiftProduct;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Request\DataPersistorInterface;
