@@ -19,6 +19,7 @@ class Index extends Action
         $page =  $this->resultFactory->create(ResultFactory::TYPE_PAGE);
         $page->setActiveMenu('RockLab_Gifto::GIFT_MANAGER');
         $page->getConfig()->getTitle()->prepend(__('Gift List'));
+
         return $page;
     }
 

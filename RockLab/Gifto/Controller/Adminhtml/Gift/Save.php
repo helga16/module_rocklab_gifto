@@ -12,6 +12,7 @@ use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use RockLab\Gifto\DataProvider\ProductTitlesProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -29,9 +30,9 @@ class Save extends Action
     private $repository;
 
     /**
-     * @var ProductRepositoryInterface
+     * @var ProductTitlesProvider
      */
-    private $productRepository;
+    private $productProvider;
 
     /** @var GiftProductInterfaceFactory */
     private $modelFactory;
@@ -46,9 +47,9 @@ class Save extends Action
      * Save constructor.
      * @param Context $context
      * @param GiftRepositoryInterface $repository
-     * @param GiftProductInterfaceFactory $userFactory
+     * @param GiftProductInterfaceFactory $modelFactory
      * @param DataPersistorInterface $dataPersistor
-     * @param ProductRepositoryInterface $productRepository
+     * @param ProductTitlesProvider $productProvider
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param LoggerInterface $logger
      */
@@ -57,14 +58,14 @@ class Save extends Action
         GiftRepositoryInterface $repository,
         GiftProductInterfaceFactory $modelFactory,
         DataPersistorInterface $dataPersistor,
-        ProductRepositoryInterface $productRepository,
+        ProductTitlesProvider $productProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         LoggerInterface $logger
     ) {
         $this->repository       = $repository;
         $this->modelFactory     = $modelFactory;
         $this->dataPersistor    = $dataPersistor;
-        $this->productRepository = $productRepository;
+        $this->productProvider = $productProvider;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->logger           = $logger;
         parent::__construct($context);
@@ -92,23 +93,13 @@ class Save extends Action
             } else {
                 $data['id'] = null;
             }
-            $arrayProducts = $this->getRequest()->getParam('mainProducts');
-            $searchCriteria = $this->searchCriteriaBuilder->addFilter('entity_id',$arrayProducts,'in')->create();
-            $mainProducts = $this->productRepository->getList($searchCriteria)->getItems();
-            $labelsMainProducts = array_map (function ($item) {
-                return $item->getName();
-            }, $mainProducts);
-            $arrayGiftProduct = $this->getRequest()->getParam('giftProducts');
-            $searchCriteriaGift = $this->searchCriteriaBuilder->addFilter('entity_id',$arrayGiftProduct,'in')->create();
-            $giftProducts = $this->productRepository->getList($searchCriteriaGift)->getItems();
-            $labelsGiftProducts = [];
-            foreach ($giftProducts as $gift) {
-                $labelsGiftProducts[] = $gift->getName();
-            }
+            $arrayMainProducts = $this->getRequest()->getParam('mainProducts');
+            $arrayGiftProducts = $this->getRequest()->getParam('giftProducts');
+            $labelsMainProducts = $this->productProvider->getProductIds($arrayMainProducts);
+            $labelsGiftProducts = $this->productProvider->getProductIds($arrayGiftProducts);
             $data['giftProduct'] = implode(', ', $labelsGiftProducts);
             $data['mainProduct'] = implode(', ', $labelsMainProducts);
             $model->setData($data);
-
             try {
                 $this->repository->save($model);
                 $this->messageManager->addSuccessMessage(__('You saved the item.'.$label));

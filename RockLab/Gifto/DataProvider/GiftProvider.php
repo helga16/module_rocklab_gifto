@@ -5,7 +5,6 @@ namespace RockLab\Gifto\DataProvider;
 use Magento\Ui\DataProvider\ModifierPoolDataProvider;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use RockLab\Gifto\Api\Model\GiftProductInterface;
-use RockLab\Gifto\Model\ResourceModel\GiftProduct\Collection;
 use RockLab\Gifto\Model\ResourceModel\GiftProduct\CollectionFactory;
 
 /**
@@ -31,9 +30,9 @@ class GiftProvider extends ModifierPoolDataProvider
 
     /**
      * GiftProvider constructor.
-     * @param $name
-     * @param $primaryFieldName
-     * @param $requestFieldName
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
      * @param CollectionFactory $collectionFactory
      * @param DataPersistorInterface $dataPersistor
      * @param array $meta
@@ -51,6 +50,7 @@ class GiftProvider extends ModifierPoolDataProvider
         $this->collectionFactory = $collectionFactory;
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
+
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -60,6 +60,7 @@ class GiftProvider extends ModifierPoolDataProvider
     public function getData()
     {
         if (!empty($this->loadedData)) {
+
             return $this->loadedData;
         }
         $items = $this->collection->getItems();
