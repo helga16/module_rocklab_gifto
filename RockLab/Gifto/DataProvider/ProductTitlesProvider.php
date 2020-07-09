@@ -40,7 +40,7 @@ class ProductTitlesProvider
      *
      * @return array|null[]
      */
-    public function getProductIds ($arrayIds)
+    public function prepareProductLabels ($arrayIds)
     {
         $searchCriteria = $this->searchCriteriaBuilder->addFilter('entity_id',$arrayIds,'in')->create();
         $arrayProducts = $this->productRepository->getList($searchCriteria)->getItems();

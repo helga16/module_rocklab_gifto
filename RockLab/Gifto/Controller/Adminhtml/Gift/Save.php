@@ -95,8 +95,8 @@ class Save extends Action
             }
             $arrayMainProducts = $this->getRequest()->getParam('mainProducts');
             $arrayGiftProducts = $this->getRequest()->getParam('giftProducts');
-            $labelsMainProducts = $this->productProvider->getProductIds($arrayMainProducts);
-            $labelsGiftProducts = $this->productProvider->getProductIds($arrayGiftProducts);
+            $labelsMainProducts = $this->productProvider->prepareProductLabels($arrayMainProducts);
+            $labelsGiftProducts = $this->productProvider->prepareProductLabels($arrayGiftProducts);
             $data['giftProduct'] = implode(', ', $labelsGiftProducts);
             $data['mainProduct'] = implode(', ', $labelsMainProducts);
             $model->setData($data);
