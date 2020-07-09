@@ -101,7 +101,7 @@ class Save extends Action
             $model->setData($data);
             try {
                 $this->repository->save($model);
-                $this->messageManager->addSuccessMessage(__('You saved the item.'.$label));
+                $this->messageManager->addSuccessMessage(__('You saved the item.'));
                 $this->dataPersistor->clear('gift');
             } catch (LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
