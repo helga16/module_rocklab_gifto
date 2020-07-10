@@ -92,12 +92,14 @@ class Save extends Action
             } else {
                 $data['id'] = null;
             }
-            $arrayMainProducts = $this->getRequest()->getParam('mainProducts');
-            $arrayGiftProducts = $this->getRequest()->getParam('giftProducts');
+            $arrayMainProducts = $this->getRequest()->getParam('idsMainProduct');
+            $arrayGiftProducts = $this->getRequest()->getParam('idsGiftProduct');
             $labelsMainProducts = $this->productProvider->prepareProductLabels($arrayMainProducts);
             $labelsGiftProducts = $this->productProvider->prepareProductLabels($arrayGiftProducts);
             $data['giftProduct'] = implode(', ', $labelsGiftProducts);
+            $data['idsGiftProduct'] = implode(', ', $arrayGiftProducts);
             $data['mainProduct'] = implode(', ', $labelsMainProducts);
+            $data['idsMainProduct'] = implode(', ', $arrayMainProducts);
             $model->setData($data);
             try {
                 $this->repository->save($model);

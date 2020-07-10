@@ -66,11 +66,15 @@ class GiftProvider extends ModifierPoolDataProvider
         $items = $this->collection->getItems();
         /** @var GiftProductInterface $gift */
         foreach ($items as $gift) {
-            $this->loadedData[$gift->getId()] = $gift->getData();
+            $changedItem = $gift->getData();
+            $changedItem['idsGiftProduct'] = explode(', ',$changedItem['idsGiftProduct']);
+            $changedItem['idsMainProduct'] = explode(', ',$changedItem['idsMainProduct']);
+            $this->loadedData[$gift->getId()] = $changedItem;
         }
         $data = $this->dataPersistor->get('gift');
         if (!empty($data)) {
             $gift = $this->collection->getNewEmptyItem();
+            $data['giftProduct'] = explode(', ',$data['giftProduct']);
             $gift->setData($data);
             $this->loadedData[$gift->getId()] = $gift->getData();
             $this->dataPersistor->clear('gift');

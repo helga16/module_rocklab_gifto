@@ -33,6 +33,14 @@
                 name="giftProduct"
                 nullable="false"
                 comment="giftProduct"/>
+        <column xsi:type="varchar"
+                name="idsGiftProduct"
+                nullable="false"
+                comment="idsGiftProduct"/>
+        <column xsi:type="varchar"
+                name="idsMainProduct"
+                nullable="false"
+                comment="idsMainProduct"/>
         <column xsi:type="int"
                 name="qty"
                 padding="6"
