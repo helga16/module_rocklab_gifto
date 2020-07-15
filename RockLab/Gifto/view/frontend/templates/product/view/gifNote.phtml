@@ -1,0 +1,16 @@
+<?php
+/**
+ * @var \RockLab\Gifto\Block\GifNote $block
+ */
+?>
+
+<?php
+$productId = $block->getData('viewModel')->getProductId();
+$giftId = $block->getGiftId($productId);
+if(!empty($giftId)):
+    $arrayProd = $block->getCollectionItems($giftId);
+?>
+<div><p>If you buy <?= $arrayProd['qty'];?> you will receive bonus products
+    <?= $arrayProd['bonusProducts']; ?>
+    </p></div>
+<?php endif;?>

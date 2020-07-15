@@ -3,8 +3,12 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="RockLab\Gifto\Api\Repository\GiftRepositoryInterface"
             type="RockLab\Gifto\Repository\GiftRepository"/>
+    <preference for="RockLab\Gifto\Api\Repository\GiftMainRepositoryInterface"
+                type="RockLab\Gifto\Repository\GiftMainRepository"/>
     <preference for="RockLab\Gifto\Api\Model\GiftProductInterface"
                 type="RockLab\Gifto\Model\GiftProduct"/>
+    <preference for="RockLab\Gifto\Api\Model\GiftMainProductInterface"
+                type="RockLab\Gifto\Model\GiftMainProduct"/>
     <virtualType name="RockLab\Gifto\Model\ResourceModel\GiftProduct\GridCollection"
                  type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>

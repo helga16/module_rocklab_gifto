@@ -3,7 +3,10 @@
 namespace RockLab\Gifto\Controller\Adminhtml\Gift;
 
 use RockLab\Gifto\Api\Model\GiftProductInterfaceFactory;
+use RockLab\Gifto\Api\Model\GiftMainProductInterfaceFactory;
 use RockLab\Gifto\Api\Repository\GiftRepositoryInterface;
+use RockLab\Gifto\Api\Repository\GiftMainRepositoryInterface;
+use RockLab\Gifto\Model\GiftMainProduct;
 use RockLab\Gifto\Model\GiftProduct;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -28,6 +31,8 @@ class Save extends Action
     /** @var GiftRepositoryInterface */
     private $repository;
 
+    /** @var GiftMainRepositoryInterface */
+    private $repositoryMainProduct;
     /**
      * @var ProductTitlesProvider
      */
@@ -36,6 +41,8 @@ class Save extends Action
     /** @var GiftProductInterfaceFactory */
     private $modelFactory;
 
+    /** @var GiftMainProductInterfaceFactory */
+    private $modelGiftMainProductFactory;
     /** @var DataPersistorInterface */
     private $dataPersistor;
 
@@ -55,14 +62,18 @@ class Save extends Action
     public function __construct(
         Context $context,
         GiftRepositoryInterface $repository,
+        GiftMainRepositoryInterface $repositoryMainProduct,
         GiftProductInterfaceFactory $modelFactory,
+        GiftMainProductInterfaceFactory $modelGiftMainProductFactory,
         DataPersistorInterface $dataPersistor,
         ProductTitlesProvider $productProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         LoggerInterface $logger
     ) {
         $this->repository       = $repository;
+        $this->repositoryMainProduct = $repositoryMainProduct;
         $this->modelFactory     = $modelFactory;
+        $this->modelGiftMainProductFactory = $modelGiftMainProductFactory;
         $this->dataPersistor    = $dataPersistor;
         $this->productProvider = $productProvider;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
@@ -81,6 +92,11 @@ class Save extends Action
         if ($data) {
             /** @var GiftProduct $model */
             $model = $this->modelFactory->create();
+            /**
+             * @var GiftMainProduct $modelForgift_product_connection
+             */
+            $modelForgift_product_connection = $this->modelGiftMainProductFactory->create();
+
             $id = $this->getRequest()->getParam('id');
             if (!empty($id)) {
                 try {
@@ -102,14 +118,23 @@ class Save extends Action
             $data['idsMainProduct'] = implode(', ', $arrayMainProducts);
             $model->setData($data);
             try {
-                $this->repository->save($model);
+                $gift_id = $this->repository->save($model)->getId();
                 $this->messageManager->addSuccessMessage(__('You saved the item.'));
+                $dataConnectTable['gift_id'] = $gift_id;
+                $idsMainProducts = $this->repository->getById($gift_id)->getIdsMainProduct();
+                $mainPro = explode(', ', $idsMainProducts);
+                foreach ($mainPro as $item) {
+                    $dataConnectTable['main_product_id'] = intval($item);
+                    $modelForgift_product_connection->setData($dataConnectTable);
+                    $this->repositoryMainProduct->save($modelForgift_product_connection);
+                }
                 $this->dataPersistor->clear('gift');
             } catch (LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __('Something went wrong while saving the user.'));
             }
+
             $this->dataPersistor->set('gift', $data);
 
             return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
