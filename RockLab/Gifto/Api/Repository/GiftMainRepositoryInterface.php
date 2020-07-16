@@ -37,5 +37,17 @@ interface GiftMainRepositoryInterface
      */
     public function save(GiftMainProductInterface $gift) : GiftMainProductInterface;
 
+    /**
+     * @param GiftMainProductInterface $gift
+     * @return GiftMainRepositoryInterface
+     */
+    public function delete(GiftMainProductInterface $gift) : GiftMainRepositoryInterface;
+
+    /**
+     * @param int $id
+     * @return GiftMainRepositoryInterface
+     */
+    public function deleteById(int $id) : GiftMainRepositoryInterface;
+
 
 }

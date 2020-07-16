@@ -65,7 +65,8 @@
                 nullable="false"
                 identity="false"
                 comment="main_product_id"/>
-
+        <constraint xsi:type="primary" referenceId = "PRIMARY">
+            <column name="main_product_id"/>
         </constraint>
         <constraint xsi:type="foreign"
                     referenceId="GIFT_PRODUCT_CONNECTION_GIFT_ID_GIFT_PRODUCTS_ID"

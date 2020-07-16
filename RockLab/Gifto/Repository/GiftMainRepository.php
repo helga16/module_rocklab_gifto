@@ -109,4 +109,34 @@ class GiftMainRepository implements GiftMainRepositoryInterface
         return $gift;
     }
 
+    /**
+     * @param GiftMainProductInterface $gift
+     * @return $this|GiftMainRepositoryInterface
+     * @throws CouldNotDeleteException
+     */
+    public function delete(GiftMainProductInterface $gift): GiftMainRepositoryInterface
+    {
+        try {
+        $this->resource->delete($gift);
+        } catch (\Exception $e){
+            throw new CouldNotDeleteException('Gift does not delete');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @return $this|GiftMainRepositoryInterface
+     * @throws CouldNotDeleteException
+     * @throws NoSuchEntityException
+     */
+    public function deleteById(int $id): GiftMainRepositoryInterface
+    {
+        $gift = $this->getById($id);
+        $this->delete($gift);
+
+        return $this;
+    }
+
 }

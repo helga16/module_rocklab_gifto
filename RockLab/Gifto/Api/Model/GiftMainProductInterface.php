@@ -10,6 +10,7 @@ interface GiftMainProductInterface
 {
     const TABLE_NAME                = 'gift_product_connection';
     const GIFT_ID                   = 'gift_id';
+    const MAIN_PRODUCT_ID           = 'main_product_id';
 
     /**
      * @param $giftId
@@ -21,5 +22,16 @@ interface GiftMainProductInterface
      * @return int
      */
     public function getGift_id ();
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function setMainProductId($id);
+
+    /**
+     * @return int
+     */
+    public function getMainProductId();
 
 }

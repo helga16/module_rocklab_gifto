@@ -8,14 +8,33 @@ use RockLab\Gifto\Repository\GiftRepository;
 use RockLab\Gifto\Repository\GiftMainRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 
+/**
+ * Class GifNote
+ * @package RockLab\Gifto\Block
+ */
 class GifNote extends Template
 {
+    /**
+     * @var GiftRepository
+     */
     private $repository;
     /**
      * @var GiftMainRepository
      */
     private $repositoryGiftMain;
+    /**
+     * @var SearchCriteriaBuilder
+     */
     private $searchCriteriaBuilder;
+
+    /**
+     * GifNote constructor.
+     * @param Template\Context $context
+     * @param GiftRepository $repository
+     * @param GiftMainRepository $repositoryGiftMain
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
         GiftRepository $repository,
@@ -29,28 +48,40 @@ class GifNote extends Template
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         parent::__construct($context, $data);
     }
-    public function getGiftId($giftId){
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('main_product_id',$giftId)->create();
-$collection = $this->repositoryGiftMain->getList($searchCriteria)->getItems();
+
+    /**
+     * @param int $productId
+     * @return int
+     */
+    public function getGiftId($productId){
+        $searchCriteria = $this->searchCriteriaBuilder->addFilter('main_product_id',$productId)->create();
+        $collection = $this->repositoryGiftMain->getList($searchCriteria)->getItems();
         $gift_id = '';
-        /**
-         * @var GiftMainProduct $item
-         */
-foreach ($collection as $item){
-    $gift_id = intval($item->getGift_id());
-}
-return $gift_id;
+        /** @var GiftMainProduct $item */
+        foreach ($collection as $item)
+        {
+            $gift_id = intval($item->getGift_id());
+        }
+
+        return $gift_id;
     }
 
-    public function getCollectionItems($value){
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('id',$value)->create();
+    /**
+     * @param int $productId
+     * @return array
+     */
+    public function getGiftCollectionItems($productId){
+        $gift_id = $this->getGiftId($productId);
+        $searchCriteria = $this->searchCriteriaBuilder->addFilter('id',$gift_id)->create();
         $collectionItems = $this->repository->getList($searchCriteria)->getItems();
         $arrData = [];
         /** @var \RockLab\Gifto\Model\GiftProduct $item */
-        foreach($collectionItems as $item){
+        foreach ($collectionItems as $item)
+        {
            $arrData['qty'] = $item->getQty();
            $arrData['bonusProducts'] = $item->getBonusProducts();
         }
+
         return $arrData;
     }
 }

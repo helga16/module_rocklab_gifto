@@ -2,15 +2,15 @@
 /**
  * @var \RockLab\Gifto\Block\GifNote $block
  */
-?>
 
-<?php
 $productId = $block->getData('viewModel')->getProductId();
-$giftId = $block->getGiftId($productId);
-if(!empty($giftId)):
-    $arrayProd = $block->getCollectionItems($giftId);
+//$giftId = $block->getGiftId($productId);
+$arrayProd = $block->getGiftCollectionItems($productId);
+    if (!empty($arrayProd)):
 ?>
-<div><p>If you buy <?= $arrayProd['qty'];?> you will receive bonus products
+<div>
+    <p>If you buy <?= $arrayProd['qty'];?> you will receive bonus products
     <?= $arrayProd['bonusProducts']; ?>
-    </p></div>
+    </p>
+</div>
 <?php endif;?>

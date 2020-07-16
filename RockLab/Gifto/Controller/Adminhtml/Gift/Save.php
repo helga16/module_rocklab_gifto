@@ -7,6 +7,8 @@ use RockLab\Gifto\Api\Model\GiftMainProductInterfaceFactory;
 use RockLab\Gifto\Api\Repository\GiftRepositoryInterface;
 use RockLab\Gifto\Api\Repository\GiftMainRepositoryInterface;
 use RockLab\Gifto\Model\GiftMainProduct;
+use RockLab\Gifto\Api\Model\GiftProductInterface as ModelMainProduct;
+
 use RockLab\Gifto\Model\GiftProduct;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -120,13 +122,28 @@ class Save extends Action
             try {
                 $gift_id = $this->repository->save($model)->getId();
                 $this->messageManager->addSuccessMessage(__('You saved the item.'));
-                $dataConnectTable['gift_id'] = $gift_id;
-                $idsMainProducts = $this->repository->getById($gift_id)->getIdsMainProduct();
-                $mainPro = explode(', ', $idsMainProducts);
-                foreach ($mainPro as $item) {
-                    $dataConnectTable['main_product_id'] = intval($item);
-                    $modelForgift_product_connection->setData($dataConnectTable);
-                    $this->repositoryMainProduct->save($modelForgift_product_connection);
+                if(!empty($gift_id)){
+                    $dataConnectTable['gift_id'] = $gift_id;
+                    $idsMainProducts = $this->repository->getById($gift_id)->getIdsMainProduct();
+                    $mainPro = explode(', ', $idsMainProducts);
+                    foreach ($mainPro as $item) {
+                        $dataConnectTable['main_product_id'] = intval($item);
+                        $modelForgift_product_connection->setData($dataConnectTable);
+                        $this->repositoryMainProduct->save($modelForgift_product_connection);
+                    }
+                    $searchCriteriaGifts = $this->searchCriteriaBuilder->addFilter('gift_id',$gift_id)->create();
+                    $giftExistCollection = $this->repositoryMainProduct->getList($searchCriteriaGifts)->getItems();
+                        if (!empty($giftExistCollection))
+                        {
+                            /** @var ModelMainProduct $gift */
+                            foreach($giftExistCollection as $gift) {
+                                $mainProductId = $gift->getMainProductId();
+                                if (!in_array($mainProductId, $mainPro))
+                                {
+                                    $this->repositoryMainProduct->delete($gift);
+                                }
+                            }
+                        }
                 }
                 $this->dataPersistor->clear('gift');
             } catch (LocalizedException $e) {

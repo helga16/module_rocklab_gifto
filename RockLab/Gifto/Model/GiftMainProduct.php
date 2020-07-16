@@ -36,4 +36,21 @@ class GiftMainProduct extends AbstractModel implements GiftMainProductInterface
     {
        return $this->getData(self::GIFT_ID);
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function setMainProductId($id)
+    {
+        $this->setData(self::MAIN_PRODUCT_ID, $id);
+    }
+
+    /**
+     * @return int
+     */
+    public function getMainProductId()
+    {
+        return $this->getData(self::MAIN_PRODUCT_ID);
+    }
 }
