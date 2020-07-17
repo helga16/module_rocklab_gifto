@@ -83,4 +83,18 @@ class GiftProduct extends AbstractModel implements GiftProductInterface
     {
         return $this->getData(self::BONUS_PRODUCTS);
     }
+
+    /**
+     * @param $ids
+     * @return mixed
+     */
+    public function setIdsBonusProduct($ids)
+    {
+        $this->setData(self::IDS_BONUS_PRODUCTS,$ids);
+    }
+
+    public function getIdsBonusProduct()
+    {
+        return $this->getData(self::IDS_BONUS_PRODUCTS);
+    }
 }

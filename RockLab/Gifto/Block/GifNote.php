@@ -80,6 +80,7 @@ class GifNote extends Template
         {
            $arrData['qty'] = $item->getQty();
            $arrData['bonusProducts'] = $item->getBonusProducts();
+           $arrData['IdsBonusProducts'] = $item->getIdsBonusProduct();
         }
 
         return $arrData;

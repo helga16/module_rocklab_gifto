@@ -12,6 +12,7 @@ interface GiftProductInterface
     const ID_FIELD                  = 'id';
     const MAIN_PRODUCTS             = 'mainProduct';
     const IDS_MAIN_PRODUCTS         = 'idsMainProduct';
+    const IDS_BONUS_PRODUCTS        = 'idsGiftProduct';
     const QTY                       = 'qty';
     const BONUS_PRODUCTS            = 'giftProduct';
 
@@ -54,5 +55,16 @@ interface GiftProductInterface
      * @return string
      */
     public function getIdsMainProduct();
+
+    /**
+     * @param $ids
+     * @return mixed
+     */
+    public function setIdsBonusProduct($ids);
+
+    /**
+     * @return string
+     */
+    public function getIdsBonusProduct();
 
 }
