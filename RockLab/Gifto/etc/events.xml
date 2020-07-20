@@ -5,4 +5,12 @@
         <observer name="rocklab_gifto_checkout_cart_save_after"
                   instance="RockLab\Gifto\Observer\CheckoutCartSaveAfterObserver" />
     </event>
+    <event name="checkout_cart_update_items_after">
+        <observer name="rocklab_gifto_checkout_cart_update_after"
+                  instance="RockLab\Gifto\Observer\CheckoutCartUpdateAfterObserver" />
+    </event>
+    <event name="checkout_cart_product_add_after">
+        <observer name="rocklab_gifto_checkout_cart_add_after"
+                  instance="RockLab\Gifto\Observer\CheckoutCartAddAfterObserver" />
+    </event>
 </config>

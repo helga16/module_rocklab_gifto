@@ -5,10 +5,14 @@
             type="RockLab\Gifto\Repository\GiftRepository"/>
     <preference for="RockLab\Gifto\Api\Repository\GiftMainRepositoryInterface"
                 type="RockLab\Gifto\Repository\GiftMainRepository"/>
+    <preference for="RockLab\Gifto\Api\Repository\GiftBonusRepositoryInterface"
+                type="RockLab\Gifto\Repository\GiftBonusRepository"/>
     <preference for="RockLab\Gifto\Api\Model\GiftProductInterface"
                 type="RockLab\Gifto\Model\GiftProduct"/>
     <preference for="RockLab\Gifto\Api\Model\GiftMainProductInterface"
                 type="RockLab\Gifto\Model\GiftMainProduct"/>
+    <preference for="RockLab\Gifto\Api\Model\GiftBonusProductInterface"
+                type="RockLab\Gifto\Model\GiftBonusProduct"/>
     <virtualType name="RockLab\Gifto\Model\ResourceModel\GiftProduct\GridCollection"
                  type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>

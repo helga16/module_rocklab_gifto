@@ -3,14 +3,14 @@
 namespace RockLab\Gifto\Api\Model;
 
 /**
- * Interface GiftMainProductInterface
+ * Interface GiftBonusProductInterface
  * @package RockLab\Gifto\Api\Model
  */
-interface GiftMainProductInterface
+interface GiftBonusProductInterface
 {
-    const TABLE_NAME                = 'gift_product_connection';
+    const TABLE_NAME                = 'gift_id_bonus_product_connection';
     const GIFT_ID                   = 'gift_id';
-    const MAIN_PRODUCT_ID           = 'main_product_id';
+    const BONUS_PRODUCT_ID           = 'bonus_product_id';
 
 
     /**
@@ -28,11 +28,11 @@ interface GiftMainProductInterface
      * @param $id
      * @return mixed
      */
-    public function setMainProductId($id);
+    public function setBonusProductId($id);
 
     /**
      * @return int
      */
-    public function getMainProductId();
+    public function getBonusProductId();
 
 }
