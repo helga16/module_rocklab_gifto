@@ -2,13 +2,14 @@
 
 namespace RockLab\Gifto\Controller\Adminhtml\Gift;
 
+use RockLab\Gifto\Api\Model\GiftBonusProductInterface;
 use RockLab\Gifto\Api\Model\GiftProductInterfaceFactory;
 use RockLab\Gifto\Api\Model\GiftMainProductInterfaceFactory;
 use RockLab\Gifto\Api\Repository\GiftRepositoryInterface;
 use RockLab\Gifto\Api\Repository\GiftMainRepositoryInterface;
 use RockLab\Gifto\Model\GiftMainProduct;
 use RockLab\Gifto\Model\GiftBonusProduct;
-use RockLab\Gifto\Api\Model\GiftProductInterface as ModelMainProduct;
+use RockLab\Gifto\Api\Model\GiftMainProductInterface as ModelMainProduct;
 use RockLab\Gifto\Api\Model\GiftBonusProductInterfaceFactory as ModelBonusProduct;
 use RockLab\Gifto\Api\Repository\GiftBonusRepositoryInterface as RepositoryBonusProduct;
 use RockLab\Gifto\Model\GiftProduct;
@@ -40,6 +41,7 @@ class Save extends Action
 
     /** @var RepositoryBonusProduct */
     private $repositoryBonusProduct;
+
     /**
      * @var ProductTitlesProvider
      */
@@ -87,16 +89,16 @@ class Save extends Action
         SearchCriteriaBuilder $searchCriteriaBuilder,
         LoggerInterface $logger
     ) {
-        $this->repository       = $repository;
-        $this->repositoryMainProduct = $repositoryMainProduct;
-        $this->repositoryBonusProduct = $repositoryBonusProduct;
-        $this->modelFactory     = $modelFactory;
+        $this->repository                = $repository;
+        $this->repositoryMainProduct     = $repositoryMainProduct;
+        $this->repositoryBonusProduct    = $repositoryBonusProduct;
+        $this->modelFactory              = $modelFactory;
         $this->modelGiftMainProductFactory = $modelGiftMainProductFactory;
-        $this->modelBonusProductFactory = $modelBonusProductFactory;
-        $this->dataPersistor    = $dataPersistor;
-        $this->productProvider = $productProvider;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->logger           = $logger;
+        $this->modelBonusProductFactory    = $modelBonusProductFactory;
+        $this->dataPersistor               = $dataPersistor;
+        $this->productProvider             = $productProvider;
+        $this->searchCriteriaBuilder       = $searchCriteriaBuilder;
+        $this->logger                      = $logger;
         parent::__construct($context);
     }
 
@@ -111,13 +113,11 @@ class Save extends Action
         if ($data) {
             /** @var GiftProduct $model */
             $model = $this->modelFactory->create();
-            /**
-             * @var GiftMainProduct $modelForgift_product_connection
-             */
+            /** @var GiftMainProduct $modelForgift_product_connection */
             $modelForgift_product_connection = $this->modelGiftMainProductFactory->create();
-
             /** @var GiftBonusProduct $modelBonusProduct */
             $modelBonusProduct = $this->modelBonusProductFactory->create();
+
             $id = $this->getRequest()->getParam('id');
             if (!empty($id)) {
                 try {
@@ -131,60 +131,21 @@ class Save extends Action
             }
             $arrayMainProducts = $this->getRequest()->getParam('idsMainProduct');
             $arrayGiftProducts = $this->getRequest()->getParam('idsGiftProduct');
-            $labelsMainProducts = $this->productProvider->prepareProductLabels($arrayMainProducts);
-            $labelsGiftProducts = $this->productProvider->prepareProductLabels($arrayGiftProducts);
-            $data['giftProduct'] = implode(', ', $labelsGiftProducts);
+            $data['mainProduct'] = $this->productProvider->prepareProductLabels($arrayMainProducts);
+            $data['giftProduct'] = $this->productProvider->prepareProductLabels($arrayGiftProducts);
             $data['idsGiftProduct'] = implode(', ', $arrayGiftProducts);
-            $data['mainProduct'] = implode(', ', $labelsMainProducts);
             $data['idsMainProduct'] = implode(', ', $arrayMainProducts);
             $model->setData($data);
             try {
                 $gift_id = $this->repository->save($model)->getId();
                 $this->messageManager->addSuccessMessage(__('You saved the item.'));
-                if(!empty($gift_id)){
-                    $dataConnectTable['gift_id'] = $gift_id;
-                    $dataBonusGiftTable['gift_id'] = $gift_id;
+                if (!empty($gift_id)) {
                     $idsMainProducts = $this->repository->getById($gift_id)->getIdsMainProduct();
                     $idsBonusProducts = $this->repository->getById($gift_id)->getIdsBonusProduct();
-                    $bonusProducts = explode(', ', $idsBonusProducts);
-                    $mainPro = explode(', ', $idsMainProducts);
-                    foreach ($mainPro as $item) {
-                        $dataConnectTable['main_product_id'] = intval($item);
-                        $modelForgift_product_connection->setData($dataConnectTable);
-                        $this->repositoryMainProduct->save($modelForgift_product_connection);
-                    }
-                    foreach($bonusProducts as $bonus){
-                       $dataBonusGiftTable['bonus_product_id'] = intval($bonus);
-                        $modelBonusProduct->setData($dataBonusGiftTable);
-                        $this->repositoryBonusProduct->save($modelBonusProduct);
-
-                    }
-                    $searchCriteriaGifts = $this->searchCriteriaBuilder->addFilter('gift_id',$gift_id)->create();
-                    $giftExistCollection = $this->repositoryMainProduct->getList($searchCriteriaGifts)->getItems();
-                        if (!empty($giftExistCollection))
-                        {
-                            /** @var ModelMainProduct $gift */
-                            foreach($giftExistCollection as $gift) {
-                                $mainProductId = $gift->getMainProductId();
-                                if (!in_array($mainProductId, $mainPro))
-                                {
-                                    $this->repositoryMainProduct->delete($gift);
-                                }
-                            }
-                        }
-
-                    $bonusExistCollection = $this->repositoryBonusProduct->getList($searchCriteriaGifts)->getItems();
-                    if (!empty($bonusExistCollection))
-                    {
-                        /** @var  GiftBonusProduct $bonus */
-                        foreach($bonusExistCollection as $bonus) {
-                            $bonusProductId = $bonus->getBonusProductId();
-                            if (!in_array($bonusProductId, $bonusProducts))
-                            {
-                                $this->repositoryBonusProduct->delete($bonus);
-                            }
-                        }
-                    }
+                    $this->repositoryBonusProduct->saveArray($idsBonusProducts, $modelBonusProduct, $gift_id);
+                    $this->repositoryMainProduct->saveArray($idsMainProducts, $modelForgift_product_connection, $gift_id);
+                    $this->repositoryBonusProduct->deleteExistBonusCollection('gift_id', $gift_id, $idsBonusProducts);
+                    $this->repositoryMainProduct->deleteExistMainProductCollection('gift_id', $gift_id, $idsMainProducts);
                 }
                 $this->dataPersistor->clear('gift');
             } catch (LocalizedException $e) {

@@ -4,8 +4,7 @@
  */
 
 $productId = $block->getData('viewModel')->getProductId();
-//$giftId = $block->getGiftId($productId);
-$arrayProd = $block->getGiftCollectionItems($productId);
+$arrayProd = $block->getProductsCollectionInfoById('', $productId);
     if (!empty($arrayProd)):
 ?>
 <div>

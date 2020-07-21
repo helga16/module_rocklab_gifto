@@ -59,13 +59,22 @@ class GifNote extends Template
     }
 
     /**
-     * @param int $productId
-     * @return int
+     * @param string $conditionValue
+     * @param $productId
+     * @return int|string
      */
-    public function getGiftId ($productId)
+    public function getGiftId ($conditionValue, $productId)
     {
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('main_product_id',$productId)->create();
-        $collection = $this->repositoryGiftMain->getList($searchCriteria)->getItems();
+        if ($conditionValue == 'bonus') {
+            $field = 'bonus_product_id';
+            $repositoryFiltered = $this->repositoryBonus;
+        } else {
+            $field = 'main_product_id';
+            $repositoryFiltered = $this->repositoryGiftMain;
+        }
+        $searchCriteria = $this->searchCriteriaBuilder->addFilter($field,$productId)->create();
+
+        $collection = $repositoryFiltered->getList($searchCriteria)->getItems();
         $gift_id = '';
         /** @var GiftMainProduct $item */
         foreach ($collection as $item)
@@ -75,22 +84,19 @@ class GifNote extends Template
 
         return $gift_id;
     }
-    public function getGiftIdViaBonus ($bonusId)
+
+    /**
+     * @param string $conditionValue
+     * @param $idItem
+     * @return array
+     */
+    public function getProductsCollectionInfoById ($conditionValue, $idItem)
     {
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('bonus_product_id',$bonusId)->create();
-        $collection = $this->repositoryBonus->getList($searchCriteria)->getItems();
-        $gift_id = '';
-        /** @var GiftBonusProduct $item */
-        foreach ($collection as $item)
-        {
-            $gift_id = intval($item->getGift_id());
+        if ($conditionValue == 'bonus') {
+            $gift_id = $this->getGiftId('bonus', $idItem);
+        } else {
+            $gift_id = $this->getGiftId('', $idItem);
         }
-
-        return $gift_id;
-    }
-
-    public function getMainProductsViaBonusProduct ($bonusProductId) {
-        $gift_id = $this->getGiftIdViaBonus($bonusProductId);
         $searchCriteria = $this->searchCriteriaBuilder->addFilter('id',$gift_id)->create();
         $collectionItems = $this->repository->getList($searchCriteria)->getItems();
         $arrData = [];
@@ -98,27 +104,9 @@ class GifNote extends Template
         foreach ($collectionItems as $item)
         {
             $arrData['qty'] = $item->getQty();
+            $arrData['bonusProducts'] = $item->getBonusProducts();
+            $arrData['IdsBonusProducts'] = $item->getIdsBonusProduct();
             $arrData['IdsMainProducts'] = $item->getIdsMainProduct();
-
-        }
-        return $arrData;
-    }
-
-    /**
-     * @param int $productId
-     * @return array
-     */
-    public function getGiftCollectionItems($productId){
-        $gift_id = $this->getGiftId($productId);
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('id',$gift_id)->create();
-        $collectionItems = $this->repository->getList($searchCriteria)->getItems();
-        $arrData = [];
-        /** @var \RockLab\Gifto\Model\GiftProduct $item */
-        foreach ($collectionItems as $item)
-        {
-           $arrData['qty'] = $item->getQty();
-           $arrData['bonusProducts'] = $item->getBonusProducts();
-           $arrData['IdsBonusProducts'] = $item->getIdsBonusProduct();
         }
 
         return $arrData;

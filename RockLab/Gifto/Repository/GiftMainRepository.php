@@ -9,6 +9,7 @@ use RockLab\Gifto\Model\ResourceModel\GiftMainProduct\Collection;
 use RockLab\Gifto\Model\ResourceModel\GiftMainProduct\CollectionFactory;
 use RockLab\Gifto\Model\GiftMainProductFactory as ModelFactory;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchResultsInterface;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchResultsInterfaceFactory;
@@ -38,25 +39,32 @@ class GiftMainRepository implements GiftMainRepositoryInterface
     private $searchResultFactory;
 
     /**
-     * GiftRepository constructor.
+     * @var SearchCriteriaBuilder */
+    private $searchCriteriaBuilder;
+
+    /**
+     * GiftMainRepository constructor.
      * @param ResourceModel $resource
      * @param ModelFactory $modeFactory
      * @param CollectionFactory $collectionFactory
      * @param CollectionProcessorInterface $collectionProcessor
      * @param SearchResultsInterfaceFactory $searchResultFactory
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ResourceModel $resource,
         ModelFactory $modeFactory,
         CollectionFactory $collectionFactory,
         CollectionProcessorInterface $collectionProcessor,
-        SearchResultsInterfaceFactory $searchResultFactory
+        SearchResultsInterfaceFactory $searchResultFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->resource             = $resource;
         $this->modelFactory         = $modeFactory;
         $this->collectionFactory    = $collectionFactory;
         $this->processor            = $collectionProcessor;
         $this->searchResultFactory  = $searchResultFactory;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -94,6 +102,35 @@ class GiftMainRepository implements GiftMainRepositoryInterface
     }
 
     /**
+     * @param string $searchCriteriaField
+     * @param int $searchCriteriaValue
+     * @param string $strMainProducts
+     * @throws CouldNotDeleteException
+     */
+    public function deleteExistMainProductCollection ($searchCriteriaField, $searchCriteriaValue, $strMainProducts)
+    {
+        $mainProducts = explode(', ', $strMainProducts);
+        $searchCriteria = $this->searchCriteriaBuilder->addFilter($searchCriteriaField, $searchCriteriaValue)->create();
+        $mainProductsExistCollection = $this->getList($searchCriteria)->getItems();
+        if (!empty($mainProductsExistCollection))
+        {
+            /** @var  GiftMainProductInterface $product */
+            foreach ($mainProductsExistCollection as $product)
+            {
+                $productId = $product->getMainProductId();
+                if (!in_array($productId, $mainProducts))
+                {
+                    try {
+                        $this->delete($product);
+                    } catch (\Exception $e) {
+                        throw new CouldNotDeleteException('Gift does not delete');
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @param GiftMainProductInterface $gift
      * @return GiftMainProductInterface
      * @throws CouldNotSaveException
@@ -107,6 +144,23 @@ class GiftMainRepository implements GiftMainRepositoryInterface
         }
 
         return $gift;
+    }
+
+    /**
+     * @param string $strProducts
+     * @param GiftMainProductInterface $model
+     * @param int $gift_id
+     * @throws CouldNotSaveException
+     */
+    public function saveArray($strProducts, GiftMainProductInterface $model, $gift_id)
+    {
+        $dataConnectTable['gift_id'] = $gift_id;
+        $mainProductsArray = explode(', ', $strProducts);
+            foreach ($mainProductsArray as $item) {
+                $dataConnectTable['main_product_id'] = intval($item);
+                $model->setData($dataConnectTable);
+                $this->save($model);
+            }
     }
 
     /**

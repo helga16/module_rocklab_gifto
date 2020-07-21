@@ -9,6 +9,7 @@ use RockLab\Gifto\Model\ResourceModel\GiftBonusProduct\Collection;
 use RockLab\Gifto\Model\ResourceModel\GiftBonusProduct\CollectionFactory;
 use RockLab\Gifto\Model\GiftBonusProductFactory as ModelFactory;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchResultsInterface;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchResultsInterfaceFactory;
@@ -37,26 +38,32 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
     /** @var SearchResultsInterfaceFactory */
     private $searchResultFactory;
 
+    /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
+    private $searchCriteriaBuilder;
+
     /**
-     * GiftRepository constructor.
+     * GiftBonusRepository constructor.
      * @param ResourceModel $resource
      * @param ModelFactory $modeFactory
      * @param CollectionFactory $collectionFactory
      * @param CollectionProcessorInterface $collectionProcessor
      * @param SearchResultsInterfaceFactory $searchResultFactory
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ResourceModel $resource,
         ModelFactory $modeFactory,
         CollectionFactory $collectionFactory,
         CollectionProcessorInterface $collectionProcessor,
-        SearchResultsInterfaceFactory $searchResultFactory
+        SearchResultsInterfaceFactory $searchResultFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->resource             = $resource;
         $this->modelFactory         = $modeFactory;
         $this->collectionFactory    = $collectionFactory;
         $this->processor            = $collectionProcessor;
         $this->searchResultFactory  = $searchResultFactory;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -94,6 +101,35 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
     }
 
     /**
+     * @param string $searchCriteriaField
+     * @param int $searchCriteriaValue
+     * @param string $strBonusProducts
+     * @throws CouldNotDeleteException
+     */
+    public function deleteExistBonusCollection ($searchCriteriaField, $searchCriteriaValue, $strBonusProducts)
+        {
+            $bonusProducts = explode(', ', $strBonusProducts);
+            $searchCriteriaGifts = $this->searchCriteriaBuilder->addFilter($searchCriteriaField, $searchCriteriaValue)->create();
+            $bonusExistCollection = $this->getList($searchCriteriaGifts)->getItems();
+            if (!empty($bonusExistCollection))
+            {
+                /** @var  GiftBonusProductInterface $bonus */
+                foreach ($bonusExistCollection as $bonus)
+                {
+                    $bonusProductId = $bonus->getBonusProductId();
+                    if (!in_array($bonusProductId, $bonusProducts))
+                    {
+                        try {
+                            $this->delete($bonus);
+                        } catch (\Exception $e) {
+                            throw new CouldNotDeleteException('Gift does not delete');
+                        }
+                    }
+                }
+            }
+    }
+
+    /**
      * @param GiftBonusProductInterface $gift
      * @return GiftBonusProductInterface
      * @throws CouldNotSaveException
@@ -107,6 +143,23 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
         }
 
         return $gift;
+    }
+
+    /**
+     * @param string $strProducts
+     * @param GiftBonusProductInterface $model
+     * @param int $gift_id
+     * @throws CouldNotSaveException
+     */
+    public function saveArray($strProducts, GiftBonusProductInterface $model, $gift_id)
+    {
+        $dataConnectTable['gift_id'] = $gift_id;
+        $bonusProductsArray = explode(', ', $strProducts);
+        foreach ($bonusProductsArray as $item) {
+            $dataConnectTable['bonus_product_id'] = intval($item);
+            $model->setData($dataConnectTable);
+            $this->save($model);
+        }
     }
 
     /**

@@ -14,9 +14,27 @@ use \Magento\Quote\Model\Quote\ItemFactory;
  */
 class CheckoutCartSaveAfterObserver implements ObserverInterface
 {
+    /**
+     * @var ItemFactory
+     */
     private $quoteItemFactory;
+
+    /**
+     * @var ProductRepositoryInterface
+     */
     private $productRepository;
+
+    /**
+     * @var GifNote
+     */
     private $gifNote;
+
+    /**
+     * CheckoutCartSaveAfterObserver constructor.
+     * @param GifNote $gifNote
+     * @param ItemFactory $quoteItemFactory
+     * @param ProductRepositoryInterface $productRepository
+     */
     public function __construct (
         GifNote $gifNote,
         ItemFactory $quoteItemFactory,
@@ -48,44 +66,41 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
                 'productPrice'=>$product->getPrice()
             ];
         }
-        foreach ($generalArr as $idProduct) {
-            if ($idProduct['productPrice'] !== 0.00) {
-                $arrayGifts = $this->gifNote->getGiftCollectionItems($idProduct['id']);
+        foreach ($generalArr as $quoteItemInfo) {
+            if ($quoteItemInfo['productPrice'] !== 0.00) {
+                $arrayGifts = $this->gifNote->getProductsCollectionInfoById('', $quoteItemInfo['id']);
                 if (!empty($arrayGifts)) {
                     $arrayGiftsIds = explode(', ', $arrayGifts['IdsBonusProducts']);
                     foreach ($arrayGiftsIds as $giftId) {
-                        if (!in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] <= $idProduct['qty']) {
+                        if (!in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] <= $quoteItemInfo['qty']) {
                             $product = $this->productRepository->getById($giftId);
                             $quoteItem = $this->quoteItemFactory->create();
-                            $quoteItem->setProduct($product);
-                            $quoteItem->addQty(1.00);
+                            $quoteItem->setProduct($product)->addQty(1.00);
                             $quoteItem->setOriginalCustomPrice(0.00);
-                            $quote = $cart->getQuote();
-                            $quote->addItem($quoteItem);
-                            $quote->collectTotals()->save();
-
+                            $cart->getQuote()->addItem($quoteItem)->collectTotals()->save();
                         }
-                        if (in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] > $idProduct['qty']) {
+                        if (in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] > $quoteItemInfo['qty'])
+                        {
                             foreach ($generalArr as $key) {
-                                if ($key['id'] == $giftId) {
+                                if ($key['id'] == $giftId)
+                                {
                                     $findQuotId = $key['quoteItemId'];
                                     $cart->removeItem($findQuotId);
                                 }
                             }
                         }
-                        // if (in_array($giftId,$productsArrayIds) && $arrayGifts['qty'] > $idProduct['qty']) {
-                        //   $cart->getQuote()->removeItem($idProduct['quoteItemId']);
-                        //}
                     }
                 }
-
             }
-            if ($idProduct['productPrice'] === 0.00) {
-                $mainProductsStr = $this->gifNote->getMainProductsViaBonusProduct($idProduct['id']);
-                if (!empty($mainProductsStr)) {
+            if ($quoteItemInfo['productPrice'] === 0.00)
+            {
+                $mainProductsStr = $this->gifNote->getProductsCollectionInfoById('bonus', $quoteItemInfo['id']);
+                if (!empty($mainProductsStr))
+                {
                     $mainProductsArr = explode(', ', $mainProductsStr['IdsMainProducts']);
-                    if (empty(array_intersect($mainProductsArr, $productsArrayIds))) {
-                    $cart->removeItem($idProduct['quoteItemId']);
+                    if (empty(array_intersect($mainProductsArr, $productsArrayIds)))
+                    {
+                      $cart->removeItem($quoteItemInfo['quoteItemId']);
                     }
                 }
             }

@@ -38,7 +38,7 @@ class ProductTitlesProvider
     /**
      * @param $arrayIds
      *
-     * @return array|null[]
+     * @return string
      */
     public function prepareProductLabels ($arrayIds)
     {
@@ -50,6 +50,6 @@ class ProductTitlesProvider
             }, $arrayProducts
         );
 
-        return $arrayLabelsProducts;
+        return implode(', ', $arrayLabelsProducts);
     }
 }
