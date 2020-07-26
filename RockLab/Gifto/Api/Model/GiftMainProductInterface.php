@@ -17,12 +17,12 @@ interface GiftMainProductInterface
      * @param $giftId
      * @return mixed
      */
-    public function setGift_id ($giftId);
+    public function setGiftId ($giftId);
 
     /**
      * @return int
      */
-    public function getGift_id ();
+    public function getGiftId ();
 
     /**
      * @param $id

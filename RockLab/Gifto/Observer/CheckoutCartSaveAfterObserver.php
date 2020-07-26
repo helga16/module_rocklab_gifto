@@ -2,9 +2,10 @@
 
 namespace RockLab\Gifto\Observer;
 
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use RockLab\Gifto\Block\GifNote;
+use RockLab\Gifto\DataProvider\DataProductProvider as DataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Quote\Model\Quote\ItemFactory;
 
@@ -25,18 +26,18 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
     private $productRepository;
 
     /**
-     * @var GifNote
+     * @var DataProvider
      */
     private $gifNote;
 
     /**
      * CheckoutCartSaveAfterObserver constructor.
-     * @param GifNote $gifNote
+     * @param DataProvider $gifNote
      * @param ItemFactory $quoteItemFactory
      * @param ProductRepositoryInterface $productRepository
      */
     public function __construct (
-        GifNote $gifNote,
+        DataProvider $gifNote,
         ItemFactory $quoteItemFactory,
         ProductRepositoryInterface $productRepository
     )
@@ -52,56 +53,58 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        /** @var Cart $cart */
         $cart = $observer->getEvent()->getData('cart');
         $productsArray = $cart->getQuote()->getAllItems();
         $productsArrayIds = [];
-        $generalArr = [];
-
-        foreach ($productsArray as $product) {
-            $productsArrayIds[]= $product->getProductId();
-            $generalArr[] = [
-                'qty'=>$product->getQty(),
-                'id'=>$product->getProductId(),
-                'quoteItemId'=>$product->getId(),
-                'productPrice'=>$product->getPrice()
-            ];
+        foreach ($productsArray as $quoteItemInfo) {
+            $productsArrayIds[] = $quoteItemInfo->getProductId();
         }
-        foreach ($generalArr as $quoteItemInfo) {
-            if ($quoteItemInfo['productPrice'] !== 0.00) {
-                $arrayGifts = $this->gifNote->getProductsCollectionInfoById('', $quoteItemInfo['id']);
+        foreach ($productsArray as $quoteItemInfo) {
+            if (($quoteItemInfo->getPrice()) !== 0.00) {
+                $arrayGifts = $this->gifNote->getProductsCollectionInfoById($quoteItemInfo->getProductId());
                 if (!empty($arrayGifts)) {
                    $arrayGiftsIds = explode(', ', $arrayGifts['IdsBonusProducts']);
                    foreach ($arrayGiftsIds as $giftId) {
-                      if (!in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] <= $quoteItemInfo['qty']) {
+                       if (!in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] <= ($quoteItemInfo->getQty())) {
                           $product = $this->productRepository->getById($giftId);
                           $quoteItem = $this->quoteItemFactory->create();
                           $quoteItem->setProduct($product)->addQty(1.00);
                           $quoteItem->setOriginalCustomPrice(0.00);
-                          $cart->getQuote()->addItem($quoteItem)->collectTotals()->save();
+                          $cart->getQuote()
+                              ->addItem($quoteItem)
+                              ->setTotalsCollectedFlag(false)
+                              ->collectTotals()
+                              ->save();
                       }
-                      if (in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] > $quoteItemInfo['qty'])
-                      {
-                         foreach ($generalArr as $key) {
-                             if ($key['id'] == $giftId)
-                             {
-                                 $findQuotId = $key['quoteItemId'];
-                                 $cart->removeItem($findQuotId)->save();
+                       if (in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] > ($quoteItemInfo->getQty())) {
+                         foreach ($productsArray as $key) {
+                              if (($key->getProductId()) == $giftId) {
+                                 $findQuotId = $key->getId();
+                                 $cart->getQuote()
+                                     ->removeItem($findQuotId)
+                                     ->setTotalsCollectedFlag(false)
+                                     ->collectTotals()
+                                     ->save();
                              }
                          }
                       }
                    }
                 }
             }
-            if ($quoteItemInfo['productPrice'] === 0.00) {
-                $mainProductsStr = $this->gifNote->getProductsCollectionInfoById('bonus', $quoteItemInfo['id']);
-               if (!empty($mainProductsStr)) {
+            if (($quoteItemInfo->getPrice()) === 0.00) {
+                $mainProductsStr = $this->gifNote->getProductsCollectionInfoById(($quoteItemInfo->getProductId()), 'bonus');
+                if (!empty($mainProductsStr)) {
                   $mainProductsArr = explode(', ', $mainProductsStr['IdsMainProducts']);
                   if (empty(array_intersect($mainProductsArr, $productsArrayIds))) {
-                      $cart->removeItem($quoteItemInfo['quoteItemId'])->save();
+                      $cart->getQuote()
+                           ->removeItem($quoteItemInfo->getId())
+                           ->setTotalsCollectedFlag(false)
+                           ->collectTotals()
+                           ->save();
                   }
                }
             }
         }
-
     }
 }

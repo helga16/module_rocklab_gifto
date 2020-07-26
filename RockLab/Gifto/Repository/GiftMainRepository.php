@@ -157,9 +157,17 @@ class GiftMainRepository implements GiftMainRepositoryInterface
         $dataConnectTable['gift_id'] = $gift_id;
         $mainProductsArray = explode(', ', $strProducts);
             foreach ($mainProductsArray as $item) {
-                $dataConnectTable['main_product_id'] = intval($item);
-                $model->setData($dataConnectTable);
-                $this->save($model);
+                $searchCriteriaInExistArr = $this->searchCriteriaBuilder
+                    ->addFilter('gift_id',  $gift_id)
+                    ->addFilter('main_product_id', $item)
+                    ->create();
+                $mainProductsExistCollection = $this->getList($searchCriteriaInExistArr)->getItems();
+                if (empty($mainProductsExistCollection)) {
+                    $dataConnectTable['main_product_id'] = intval($item);
+                    $model->setData($dataConnectTable);
+                    $this->save($model);
+                }
+
             }
     }
 

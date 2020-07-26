@@ -50,7 +50,6 @@ class GiftProvider extends ModifierPoolDataProvider
         $this->collectionFactory = $collectionFactory;
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
-
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 

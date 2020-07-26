@@ -3,8 +3,7 @@
  * @var \RockLab\Gifto\Block\GifNote $block
  */
 
-$productId = $block->getData('viewModel')->getProductId();
-$arrayProd = $block->getProductsCollectionInfoById('', $productId);
+$arrayProd = $block->getData('viewModel')->getProductDataArray();
     if (!empty($arrayProd)):
 ?>
 <div>

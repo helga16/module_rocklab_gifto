@@ -52,6 +52,13 @@
     </table>
     <table name="gift_product_connection" resource="default" engine="innodb" comment="gift_product_connection">
         <column xsi:type="int"
+                name="id"
+                unsigned="true"
+                padding="10"
+                nullable="false"
+                identity="true"
+                comment="id"/>
+        <column xsi:type="int"
                 name="gift_id"
                 unsigned="true"
                 padding="10"
@@ -66,7 +73,7 @@
                 identity="false"
                 comment="main_product_id"/>
         <constraint xsi:type="primary" referenceId = "PRIMARY">
-            <column name="main_product_id"/>
+            <column name="id"/>
         </constraint>
         <constraint xsi:type="foreign"
                     referenceId="GIFT_PRODUCT_CONNECTION_GIFT_ID_GIFT_PRODUCTS_ID"
@@ -77,6 +84,13 @@
                     onDelete="CASCADE"/>
     </table>
     <table name="gift_id_bonus_product_connection" resource="default" engine="innodb" comment="gift_product_connection">
+        <column xsi:type="int"
+                name="id"
+                unsigned="true"
+                padding="10"
+                nullable="false"
+                identity="true"
+                comment="id"/>
         <column xsi:type="int"
                 name="gift_id"
                 unsigned="true"
@@ -92,7 +106,7 @@
                 identity="false"
                 comment="bonus_product_id"/>
         <constraint xsi:type="primary" referenceId = "PRIMARY">
-            <column name="bonus_product_id"/>
+            <column name="id"/>
         </constraint>
         <constraint xsi:type="foreign"
                     referenceId="GIFT_ID_BONUS_PRODUCT_CONNECTION_GIFT_ID_GIFT_PRODUCTS_ID"

@@ -156,9 +156,16 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
         $dataConnectTable['gift_id'] = $gift_id;
         $bonusProductsArray = explode(', ', $strProducts);
         foreach ($bonusProductsArray as $item) {
-            $dataConnectTable['bonus_product_id'] = intval($item);
-            $model->setData($dataConnectTable);
-            $this->save($model);
+            $searchCriteriaInExistArr = $this->searchCriteriaBuilder
+                ->addFilter('gift_id', $gift_id)
+                ->addFilter('bonus_product_id', $item)
+                ->create();
+            $giftProductsExistCollection = $this->getList($searchCriteriaInExistArr)->getItems();
+            if (empty($giftProductsExistCollection)) {
+                $dataConnectTable['bonus_product_id'] = (int) $item;
+                $model->setData($dataConnectTable);
+                $this->save($model);
+            }
         }
     }
 

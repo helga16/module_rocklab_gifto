@@ -11,7 +11,7 @@
             <block class="RockLab\Gifto\Block\GifNote" name="gif.note" template="RockLab_Gifto::product/view/gifNote.phtml" before="-">
                 <arguments>
                     <argument name="viewModel"
-                              xsi:type="object">RockLab\Gifto\ViewModel\GetSku</argument>
+                              xsi:type="object">RockLab\Gifto\ViewModel\ProductData</argument>
                 </arguments>
             </block>
         </referenceContainer>

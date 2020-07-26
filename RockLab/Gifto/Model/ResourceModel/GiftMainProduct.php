@@ -15,12 +15,12 @@ class GiftMainProduct extends AbstractDb
      *
      * @var bool
      */
-    protected $_isPkAutoIncrement = false;
+   // protected $_isPkAutoIncrement = false;
     /**
      * Standard resource model initialization.
      */
     public function _construct()
     {
-        $this->_init('gift_product_connection', 'main_product_id');
+        $this->_init('gift_product_connection', 'id');
     }
 }

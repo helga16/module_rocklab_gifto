@@ -21,6 +21,6 @@ class GiftBonusProduct extends AbstractDb
      */
     public function _construct()
     {
-        $this->_init('gift_id_bonus_product_connection', 'bonus_product_id');
+        $this->_init('gift_id_bonus_product_connection', 'id');
     }
 }

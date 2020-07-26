@@ -24,7 +24,7 @@ class GiftMainProduct extends AbstractModel implements GiftMainProductInterface
      * @param $giftId
      * @return mixed
      */
-    public function setGift_id($giftId)
+    public function setGiftId($giftId)
     {
         $this->setData(self::GIFT_ID,$giftId);
     }
@@ -32,7 +32,7 @@ class GiftMainProduct extends AbstractModel implements GiftMainProductInterface
     /**
      * @return int
      */
-    public function getGift_id()
+    public function getGiftId()
     {
        return $this->getData(self::GIFT_ID);
     }
