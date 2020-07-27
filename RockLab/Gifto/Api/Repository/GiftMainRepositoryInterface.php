@@ -5,7 +5,6 @@ namespace RockLab\Gifto\Api\Repository;
 use RockLab\Gifto\Api\Model\GiftMainProductInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SearchResultsInterface;
-use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
@@ -48,6 +47,4 @@ interface GiftMainRepositoryInterface
      * @return GiftMainRepositoryInterface
      */
     public function deleteById(int $id) : GiftMainRepositoryInterface;
-
-
 }

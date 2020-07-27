@@ -53,13 +53,11 @@ class MassDelete extends Action
     public function execute()
     {
         if (!$this->getRequest()->isPost()) {
-
             return $this->_redirect('*/*/index');
         }
         $ids = $this->getRequest()->getParam('selected');
         if (empty($ids)) {
             $this->messageManager->addWarningMessage(__("Please select ids"));
-
             return $this->_redirect('*/*/index');
         }
         foreach ($ids as $id) {

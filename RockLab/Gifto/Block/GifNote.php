@@ -10,6 +10,11 @@ use Magento\Framework\View\Element\Template;
  */
 class GifNote extends Template
 {
+    /**
+     * GifNote constructor.
+     * @param Template\Context $context
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
         array $data = []

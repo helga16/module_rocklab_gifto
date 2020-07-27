@@ -12,7 +12,6 @@ interface GiftMainProductInterface
     const GIFT_ID                   = 'gift_id';
     const MAIN_PRODUCT_ID           = 'main_product_id';
 
-
     /**
      * @param $giftId
      * @return mixed
@@ -34,5 +33,4 @@ interface GiftMainProductInterface
      * @return int
      */
     public function getMainProductId();
-
 }

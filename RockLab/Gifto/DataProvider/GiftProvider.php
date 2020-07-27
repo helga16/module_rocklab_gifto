@@ -59,10 +59,10 @@ class GiftProvider extends ModifierPoolDataProvider
     public function getData()
     {
         if (!empty($this->loadedData)) {
-
             return $this->loadedData;
         }
         $items = $this->collection->getItems();
+
         /** @var GiftProductInterface $gift */
         foreach ($items as $gift) {
             $changedItem = $gift->getData();

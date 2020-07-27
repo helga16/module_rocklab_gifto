@@ -3,7 +3,6 @@
 namespace RockLab\Gifto\DataProvider;
 
 use RockLab\Gifto\Model\GiftMainProduct;
-use RockLab\Gifto\Model\GiftBonusProduct;
 use RockLab\Gifto\Repository\GiftRepository;
 use RockLab\Gifto\Repository\GiftMainRepository;
 use RockLab\Gifto\Repository\GiftBonusRepository;

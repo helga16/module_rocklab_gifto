@@ -34,5 +34,4 @@ interface GiftBonusProductInterface
      * @return int
      */
     public function getBonusProductId();
-
 }

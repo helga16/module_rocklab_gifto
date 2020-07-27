@@ -49,7 +49,6 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
 
     /**
      * @param Observer $observer
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(Observer $observer)
     {
@@ -61,39 +60,12 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
             $productsArrayIds[] = $quoteItemInfo->getProductId();
         }
         foreach ($productsArray as $quoteItemInfo) {
-            if (($quoteItemInfo->getPrice()) !== 0.00) {
-                $arrayGifts = $this->gifNote->getProductsCollectionInfoById($quoteItemInfo->getProductId());
-                if (!empty($arrayGifts)) {
-                   $arrayGiftsIds = explode(', ', $arrayGifts['IdsBonusProducts']);
-                   foreach ($arrayGiftsIds as $giftId) {
-                       if (!in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] <= ($quoteItemInfo->getQty())) {
-                          $product = $this->productRepository->getById($giftId);
-                          $quoteItem = $this->quoteItemFactory->create();
-                          $quoteItem->setProduct($product)->addQty(1.00);
-                          $quoteItem->setOriginalCustomPrice(0.00);
-                          $cart->getQuote()
-                              ->addItem($quoteItem)
-                              ->setTotalsCollectedFlag(false)
-                              ->collectTotals()
-                              ->save();
-                      }
-                       if (in_array($giftId, $productsArrayIds) && $arrayGifts['qty'] > ($quoteItemInfo->getQty())) {
-                         foreach ($productsArray as $key) {
-                              if (($key->getProductId()) == $giftId) {
-                                 $findQuotId = $key->getId();
-                                 $cart->getQuote()
-                                     ->removeItem($findQuotId)
-                                     ->setTotalsCollectedFlag(false)
-                                     ->collectTotals()
-                                     ->save();
-                             }
-                         }
-                      }
-                   }
-                }
-            }
             if (($quoteItemInfo->getPrice()) === 0.00) {
-                $mainProductsStr = $this->gifNote->getProductsCollectionInfoById(($quoteItemInfo->getProductId()), 'bonus');
+                $mainProductsStr = $this->gifNote
+                                        ->getProductsCollectionInfoById(
+                                            $quoteItemInfo->getProductId(),
+                                            'bonus'
+                                        );
                 if (!empty($mainProductsStr)) {
                   $mainProductsArr = explode(', ', $mainProductsStr['IdsMainProducts']);
                   if (empty(array_intersect($mainProductsArr, $productsArrayIds))) {

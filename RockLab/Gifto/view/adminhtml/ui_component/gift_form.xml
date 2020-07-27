@@ -110,6 +110,9 @@
                     <item name="source" xsi:type="string">gift</item>
                     <item name="sortOrder" xsi:type="number">30</item>
                     <item name="require" xsi:type="boolean">false</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="validate-not-negative-number" xsi:type="boolean">true</item>
+                    </item>
                     <item name="dataScope" xsi:type="string">qty</item>
                 </item>
             </argument>
