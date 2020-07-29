@@ -33,6 +33,7 @@ interface GiftProductInterface
      * @return mixed
      */
     public function setBonusProducts($bonusProducts);
+
     /**
      * @return string
      */
@@ -42,15 +43,18 @@ interface GiftProductInterface
      * @return string
      */
     public function getBonusProducts();
+
     /**
      * @return int
      */
     public function getQty();
+
     /**
      * @param $Ids
      * @return mixed
      */
     public function setIdsMainProduct($Ids);
+
     /**
      * @return string
      */
@@ -66,5 +70,4 @@ interface GiftProductInterface
      * @return string
      */
     public function getIdsBonusProduct();
-
 }

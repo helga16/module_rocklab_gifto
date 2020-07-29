@@ -16,6 +16,7 @@ class GenericButton
     protected $context;
 
     /**
+     * GenericButton constructor.
      * @param Context $context
      */
     public function __construct(

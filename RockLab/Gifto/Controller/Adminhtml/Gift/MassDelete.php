@@ -19,10 +19,12 @@ class MassDelete extends Action
      * @var GiftRepositoryInterface
      */
     private $repository;
+
     /**
      * @var Context
      */
     private $context;
+
     /**
      * @var LoggerInterface
      */
@@ -40,8 +42,7 @@ class MassDelete extends Action
         Context $context,
         GiftRepositoryInterface $repository,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->context = $context;
         $this->repository = $repository;
         parent::__construct($context);

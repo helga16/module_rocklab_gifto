@@ -13,8 +13,19 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
  */
 class ProductOptions implements OptionSourceInterface
 {
+    /**
+     * @var ProductRepositoryInterface
+     */
     private $repository;
+
+    /**
+     * @var RequestInterface
+     */
     protected $request;
+
+    /**
+     * @var array
+     */
     protected $productTree;
 
     /**
@@ -32,8 +43,7 @@ class ProductOptions implements OptionSourceInterface
         ProductRepositoryInterface $repository,
         RequestInterface $request,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->request = $request;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
@@ -50,8 +60,9 @@ class ProductOptions implements OptionSourceInterface
     /**
      * @return array|null
      */
-    public function getProductTree(){
-        if($this->productTree === null) {
+    public function getProductTree()
+    {
+        if ($this->productTree === null) {
             $searchCriteria = $this->searchCriteriaBuilder->create();
             $searchResult = $this->repository->getList($searchCriteria);
             if ($searchResult->getTotalCount() > 0) {

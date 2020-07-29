@@ -112,14 +112,11 @@ class GiftMainRepository implements GiftMainRepositoryInterface
         $mainProducts = explode(', ', $strMainProducts);
         $searchCriteria = $this->searchCriteriaBuilder->addFilter($searchCriteriaField, $searchCriteriaValue)->create();
         $mainProductsExistCollection = $this->getList($searchCriteria)->getItems();
-        if (!empty($mainProductsExistCollection))
-        {
+        if (!empty($mainProductsExistCollection)) {
             /** @var  GiftMainProductInterface $product */
-            foreach ($mainProductsExistCollection as $product)
-            {
+            foreach ($mainProductsExistCollection as $product) {
                 $productId = $product->getMainProductId();
-                if (!in_array($productId, $mainProducts))
-                {
+                if (!in_array($productId, $mainProducts)) {
                     try {
                         $this->delete($product);
                     } catch (\Exception $e) {
@@ -167,7 +164,6 @@ class GiftMainRepository implements GiftMainRepositoryInterface
                     $model->setData($dataConnectTable);
                     $this->save($model);
                 }
-
             }
     }
 
@@ -200,5 +196,4 @@ class GiftMainRepository implements GiftMainRepositoryInterface
 
         return $this;
     }
-
 }

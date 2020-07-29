@@ -82,4 +82,3 @@ class GiftProvider extends ModifierPoolDataProvider
         return $this->loadedData;
     }
 }
-

@@ -107,26 +107,23 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
      * @throws CouldNotDeleteException
      */
     public function deleteExistBonusCollection ($searchCriteriaField, $searchCriteriaValue, $strBonusProducts)
-        {
-            $bonusProducts = explode(', ', $strBonusProducts);
-            $searchCriteriaGifts = $this->searchCriteriaBuilder->addFilter($searchCriteriaField, $searchCriteriaValue)->create();
-            $bonusExistCollection = $this->getList($searchCriteriaGifts)->getItems();
-            if (!empty($bonusExistCollection))
-            {
-                /** @var  GiftBonusProductInterface $bonus */
-                foreach ($bonusExistCollection as $bonus)
-                {
-                    $bonusProductId = $bonus->getBonusProductId();
-                    if (!in_array($bonusProductId, $bonusProducts))
-                    {
-                        try {
-                            $this->delete($bonus);
-                        } catch (\Exception $e) {
-                            throw new CouldNotDeleteException('Gift does not delete');
-                        }
-                    }
+    {
+        $bonusProducts = explode(', ', $strBonusProducts);
+        $searchCriteriaGifts = $this->searchCriteriaBuilder->addFilter($searchCriteriaField, $searchCriteriaValue)->create();
+        $bonusExistCollection = $this->getList($searchCriteriaGifts)->getItems();
+        if (!empty($bonusExistCollection)) {
+            /** @var  GiftBonusProductInterface $bonus */
+            foreach ($bonusExistCollection as $bonus) {
+                $bonusProductId = $bonus->getBonusProductId();
+                if (!in_array($bonusProductId, $bonusProducts)) {
+                   try {
+                     $this->delete($bonus);
+                   } catch (\Exception $e) {
+                      throw new CouldNotDeleteException('Gift does not delete');
+                   }
                 }
             }
+        }
     }
 
     /**
@@ -198,5 +195,4 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
 
         return $this;
     }
-
 }

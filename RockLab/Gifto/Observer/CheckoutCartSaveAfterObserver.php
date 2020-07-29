@@ -40,8 +40,7 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
         DataProvider $gifNote,
         ItemFactory $quoteItemFactory,
         ProductRepositoryInterface $productRepository
-    )
-    {
+    ) {
         $this->gifNote = $gifNote;
         $this->quoteItemFactory = $quoteItemFactory;
         $this->productRepository = $productRepository;
@@ -62,10 +61,7 @@ class CheckoutCartSaveAfterObserver implements ObserverInterface
         foreach ($productsArray as $quoteItemInfo) {
             if (($quoteItemInfo->getPrice()) === 0.00) {
                 $mainProductsStr = $this->gifNote
-                                        ->getProductsCollectionInfoById(
-                                            $quoteItemInfo->getProductId(),
-                                            'bonus'
-                                        );
+                                        ->getProductsCollectionInfoById($quoteItemInfo->getProductId(),'bonus');
                 if (!empty($mainProductsStr)) {
                   $mainProductsArr = explode(', ', $mainProductsStr['IdsMainProducts']);
                   if (empty(array_intersect($mainProductsArr, $productsArrayIds))) {

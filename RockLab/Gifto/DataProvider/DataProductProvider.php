@@ -6,6 +6,7 @@ use RockLab\Gifto\Model\GiftMainProduct;
 use RockLab\Gifto\Repository\GiftRepository;
 use RockLab\Gifto\Repository\GiftMainRepository;
 use RockLab\Gifto\Repository\GiftBonusRepository;
+use Magento\Catalog\Block\Product\View;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 
 /**
@@ -23,6 +24,9 @@ class DataProductProvider
     /** @var GiftBonusRepository */
     private $repositoryBonus;
 
+    /** @var View */
+    private $product;
+
     /** @var SearchCriteriaBuilder */
     private $searchCriteriaBuilder;
 
@@ -31,18 +35,20 @@ class DataProductProvider
      * @param GiftRepository $repository
      * @param GiftMainRepository $repositoryGiftMain
      * @param GiftBonusRepository $repositoryBonus
+     * @param View $product
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         GiftRepository $repository,
         GiftMainRepository $repositoryGiftMain,
         GiftBonusRepository $repositoryBonus,
+        View $product,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->repositoryGiftMain = $repositoryGiftMain;
         $this->repositoryBonus = $repositoryBonus;
+        $this->product = $product;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
@@ -51,7 +57,7 @@ class DataProductProvider
      * @param $productId
      * @return int|string
      */
-    public function getGiftId ($productId, $conditionValue = '')
+    public function getGiftId($productId, $conditionValue = '')
     {
         if ($conditionValue === 'bonus') {
             $field = 'bonus_product_id';
@@ -63,7 +69,6 @@ class DataProductProvider
         $searchCriteria = $this->searchCriteriaBuilder
                                ->addFilter($field, $productId)
                                ->create();
-
         $collection = $repositoryFiltered->getList($searchCriteria)
                                          ->getItems();
         $giftId = '';
@@ -72,6 +77,7 @@ class DataProductProvider
         foreach ($collection as $item) {
             $giftId = (int) $item->getGiftId();
         }
+
         return $giftId;
     }
 
@@ -80,7 +86,7 @@ class DataProductProvider
      * @param string $conditionValue
      * @return array
      */
-    public function getProductsCollectionInfoById (int $idItem, $conditionValue = ''): array
+    public function getProductsCollectionInfoById(int $idItem, $conditionValue = ''): array
     {
         if ($conditionValue === 'bonus') {
             $gift_id = $this->getGiftId($idItem, 'bonus');
@@ -104,5 +110,16 @@ class DataProductProvider
         }
 
         return $arrData;
+    }
+
+    /**
+     * @param string $conditionValue
+     * @return array
+     */
+    public function getProductDataArray($conditionValue = ''): array
+    {
+        $productId = $this->product->getProduct()->getId();
+
+        return $this->getProductsCollectionInfoById($productId, $conditionValue);
     }
 }

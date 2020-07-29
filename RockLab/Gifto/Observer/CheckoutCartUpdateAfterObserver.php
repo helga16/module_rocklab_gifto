@@ -40,8 +40,7 @@ class CheckoutCartUpdateAfterObserver implements ObserverInterface
         DataProvider $gifNote,
         ItemFactory $quoteItemFactory,
         ProductRepositoryInterface $productRepository
-    )
-    {
+    ) {
         $this->gifNote = $gifNote;
         $this->quoteItemFactory = $quoteItemFactory;
         $this->productRepository = $productRepository;

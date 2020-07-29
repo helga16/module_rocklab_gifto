@@ -29,8 +29,7 @@ class ProductTitlesProvider
     public function __construct(
         ProductRepositoryInterface $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    )
-    {
+    ) {
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
@@ -47,7 +46,8 @@ class ProductTitlesProvider
         $arrayLabelsProducts = array_map (
             function ($item) {
                 return $item->getName();
-            }, $arrayProducts
+            },
+            $arrayProducts
         );
 
         return implode(', ', $arrayLabelsProducts);

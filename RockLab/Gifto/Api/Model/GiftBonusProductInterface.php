@@ -12,7 +12,6 @@ interface GiftBonusProductInterface
     const GIFT_ID                   = 'gift_id';
     const BONUS_PRODUCT_ID           = 'bonus_product_id';
 
-
     /**
      * @param $giftId
      * @return mixed

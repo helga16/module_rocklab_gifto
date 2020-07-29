@@ -27,9 +27,7 @@ use Zend_Validate_GreaterThan;
  */
 class Save extends Action
 {
-    /**
-     * @var SearchCriteriaBuilder
-     */
+    /** @var SearchCriteriaBuilder */
     private $searchCriteriaBuilder;
 
     /** @var GiftRepositoryInterface */
@@ -41,9 +39,7 @@ class Save extends Action
     /** @var RepositoryBonusProduct */
     private $repositoryBonusProduct;
 
-    /**
-     * @var ProductTitlesProvider
-     */
+    /** @var ProductTitlesProvider */
     private $productProvider;
 
     /** @var GiftProductInterfaceFactory */
@@ -103,14 +99,15 @@ class Save extends Action
 
     /**
      * @return \Magento\Backend\Model\View\Result\Redirect|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws LocalizedException
      */
-    public function execute()
+     public function execute()
     {
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $data = $this->getRequest()->getPostValue();
-        if (!empty($data)) {
 
+        if (!empty($data)) {
             /** @var GiftProduct $model */
             $model = $this->modelFactory->create();
             /** @var GiftMainProduct $modelForgift_product_connection */
@@ -119,6 +116,7 @@ class Save extends Action
             $modelBonusProduct = $this->modelBonusProductFactory->create();
 
             $id = $this->getRequest()->getParam('id');
+
             if (!empty($id)) {
                 try {
                     $model = $this->repository->getById($id);
@@ -137,14 +135,13 @@ class Save extends Action
             $data['giftProduct'] = $this->productProvider->prepareProductLabels($arrayGiftProducts);
             $data['idsGiftProduct'] = implode(', ', $arrayGiftProducts);
             $data['idsMainProduct'] = implode(', ', $arrayMainProducts);
-            $validator = new Zend_Validate_GreaterThan(0);
+            $validator = new Zend_Validate_GreaterThan(1);
 
             if ($validator->isValid($qtyProductRequest)) {
                 $model->setData($data);
             } else {
                 throw new LocalizedException(__('Please enter correct number'));
             }
-
             try {
                 $giftId = $this->repository->save($model)->getId();
                 $this->messageManager->addSuccessMessage(__('You saved the item.'));
@@ -164,10 +161,11 @@ class Save extends Action
             } catch (\Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __('Something went wrong while saving the user.'));
             }
-
             $this->dataPersistor->set('gift', $data);
+
             return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
         }
+
         return $resultRedirect->setPath('*/*/index');
     }
 }
