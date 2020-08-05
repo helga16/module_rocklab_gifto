@@ -149,18 +149,18 @@ class GiftMainRepository implements GiftMainRepositoryInterface
      * @param int $gift_id
      * @throws CouldNotSaveException
      */
-    public function saveArray($strProducts, GiftMainProductInterface $model, $gift_id)
+    public function saveArray($strProducts, GiftMainProductInterface $model, $giftId)
     {
-        $dataConnectTable['gift_id'] = $gift_id;
+        $dataConnectTable['gift_id'] = $giftId;
         $mainProductsArray = explode(', ', $strProducts);
             foreach ($mainProductsArray as $item) {
                 $searchCriteriaInExistArr = $this->searchCriteriaBuilder
-                    ->addFilter('gift_id',  $gift_id)
+                    ->addFilter('gift_id',  $giftId)
                     ->addFilter('main_product_id', $item)
                     ->create();
                 $mainProductsExistCollection = $this->getList($searchCriteriaInExistArr)->getItems();
                 if (empty($mainProductsExistCollection)) {
-                    $dataConnectTable['main_product_id'] = intval($item);
+                    $dataConnectTable['main_product_id'] = (int) $item;
                     $model->setData($dataConnectTable);
                     $this->save($model);
                 }

@@ -4,7 +4,7 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="RockLab_Gifto::GIFT_MANAGER"
+                <resource id="RockLab_Gifto::managers_gifts_list_access"
                           title="GIFT_MANAGER"
                           translate="title"
                           sortOrder="30"

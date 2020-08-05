@@ -110,8 +110,8 @@ class Save extends Action
         if (!empty($data)) {
             /** @var GiftProduct $model */
             $model = $this->modelFactory->create();
-            /** @var GiftMainProduct $modelForgift_product_connection */
-            $modelForgift_product_connection = $this->modelGiftMainProductFactory->create();
+            /** @var GiftMainProduct $modelForGiftProductConnection */
+            $modelForGiftProductConnection = $this->modelGiftMainProductFactory->create();
             /** @var GiftBonusProduct $modelBonusProduct */
             $modelBonusProduct = $this->modelBonusProductFactory->create();
 
@@ -149,7 +149,7 @@ class Save extends Action
                     $idsMainProducts = $this->repository->getById($giftId)->getIdsMainProduct();
                     $idsBonusProducts = $this->repository->getById($giftId)->getIdsBonusProduct();
                     $this->repositoryBonusProduct->saveArray($idsBonusProducts, $modelBonusProduct, $giftId);
-                    $this->repositoryMainProduct->saveArray($idsMainProducts, $modelForgift_product_connection, $giftId);
+                    $this->repositoryMainProduct->saveArray($idsMainProducts, $modelForGiftProductConnection, $giftId);
                     $this->repositoryBonusProduct
                         ->deleteExistBonusCollection('gift_id', $giftId, $idsBonusProducts);
                     $this->repositoryMainProduct

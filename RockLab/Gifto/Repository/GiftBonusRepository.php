@@ -148,13 +148,13 @@ class GiftBonusRepository implements GiftBonusRepositoryInterface
      * @param int $gift_id
      * @throws CouldNotSaveException
      */
-    public function saveArray($strProducts, GiftBonusProductInterface $model, $gift_id)
+    public function saveArray($strProducts, GiftBonusProductInterface $model, $giftId)
     {
-        $dataConnectTable['gift_id'] = $gift_id;
+        $dataConnectTable['gift_id'] = $giftId;
         $bonusProductsArray = explode(', ', $strProducts);
         foreach ($bonusProductsArray as $item) {
             $searchCriteriaInExistArr = $this->searchCriteriaBuilder
-                ->addFilter('gift_id', $gift_id)
+                ->addFilter('gift_id', $giftId)
                 ->addFilter('bonus_product_id', $item)
                 ->create();
             $giftProductsExistCollection = $this->getList($searchCriteriaInExistArr)->getItems();
