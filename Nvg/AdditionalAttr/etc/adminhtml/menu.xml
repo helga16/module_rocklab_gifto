@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Nvg_AdditionalAttr::title"
+             title="Vendor Attribute"
+             module="Nvg_AdditionalAttr"
+             sortOrder="75"
+             parent="Magento_Backend::stores"
+             resource="Magento_Backend::stores" />
+        <add id="Nvg_AdditionalAttr::data"
+             title="Vendor Attribute data"
+             module="Nvg_AdditionalAttr"
+             parent="Nvg_AdditionalAttr::title"
+             resource="Nvg_AdditionalAttr::title"
+             sortOrder="76"
+             action="vendor/attribute/index"/>
+    </menu>
+</config>
