@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referencecontainer name="product.info.type">
+            <block class="Nvg\AdditionalAttr\Block\VendorBlock" name="product.info.vendor" template="Nvg_AdditionalAttr::product/view/vendor.phtml" after="product.info.sku"/>
+        </referencecontainer>
+    </body>
+</page>
